@@ -1,5 +1,5 @@
 package com.example.appnews.data.remote.api.model
 
-data class DataResponse(
+data class NewsResponse(
     val feed: Feed
 )
