@@ -61,10 +61,17 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.lifecycle.runtime.ktx.v262)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
     implementation(libs.koin.android)
+    implementation(libs.androidx.runtime.livedata.v130)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.retrofit.v290)
+    implementation(libs.converter.gson.v290)
+    implementation(libs.kotlinx.coroutines.android.v164)
+
+
+
 
 
 
@@ -76,6 +83,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
