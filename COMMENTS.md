@@ -73,3 +73,8 @@
 - Configuração do ViewModel na MainActivity para buscar dados da API.
 - Implementação da lógica para consumir os dados da API e popular a tela (sem buscar ainda a imagem).
 - Criação do arquivo comments.md.
+
+### **4º Commit**
+- Melhoria no layout: Ajustes para melhor apresentação do nome do aplicativo, proporcionando maior espaçamento e clareza visual.
+- Remoção do ícone de refresh: Substituído por um gesto de Pull to Refresh(arrastar para baixo na lista), seguindo padrões mais modernos de usabilidade.
+- Implementação da lógica de refresh.

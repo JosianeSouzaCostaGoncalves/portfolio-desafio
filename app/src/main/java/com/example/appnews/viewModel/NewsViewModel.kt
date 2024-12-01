@@ -1,6 +1,7 @@
 package com.example.appnews.viewModel
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,15 +18,19 @@ class NewsViewModel(
     private val _newsLive = MutableLiveData<NewsResponse>()
     val newsLive: LiveData<NewsResponse> = _newsLive
 
+    var isRefreshing = mutableStateOf(false)
+        private set
+
     fun getNews() {
+        isRefreshing.value = true
         viewModelScope.launch {
             try {
-                val response = withContext(Dispatchers.IO) {
-                    repository.getNews()
-                }
-                _newsLive.value = response
+                val news = repository.getNews()
+                _newsLive.value = news
             } catch (e: Exception) {
-                e.message?.let { Log.d("bob", it) }
+                e.printStackTrace()
+            } finally {
+                isRefreshing.value = false
             }
         }
     }

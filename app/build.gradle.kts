@@ -69,11 +69,8 @@ dependencies {
     implementation(libs.retrofit.v290)
     implementation(libs.converter.gson.v290)
     implementation(libs.kotlinx.coroutines.android.v164)
-
-
-
-
-
+    implementation(libs.coil.compose.v240)
+    implementation(libs.accompanist.swiperefresh)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

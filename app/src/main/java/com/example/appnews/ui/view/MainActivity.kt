@@ -10,21 +10,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,6 +45,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.appnews.R
 import com.example.appnews.ui.theme.AppNewsTheme
 import com.example.appnews.viewModel.NewsViewModel
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
@@ -76,8 +75,9 @@ fun AppNavigation() {
 }
 
 @Composable
-fun NewsScreen(viewModel: NewsViewModel = koinViewModel()){
+fun NewsScreen(viewModel: NewsViewModel = koinViewModel()) {
     val newsResponse = viewModel.newsLive.observeAsState()
+    val isRefreshing by viewModel.isRefreshing
 
     LaunchedEffect(Unit) {
         viewModel.getNews()
@@ -87,6 +87,7 @@ fun NewsScreen(viewModel: NewsViewModel = koinViewModel()){
         ?.filter { it.type?.lowercase() == "materia" }
         ?: emptyList()
 
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -95,7 +96,12 @@ fun NewsScreen(viewModel: NewsViewModel = koinViewModel()){
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .padding(
+                    top = androidx.compose.foundation.layout.WindowInsets.statusBars
+                        .asPaddingValues()
+                        .calculateTopPadding() + 16.dp,
+                    bottom = 16.dp
+                ),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -104,31 +110,24 @@ fun NewsScreen(viewModel: NewsViewModel = koinViewModel()){
                 style = MaterialTheme.typography.h4,
                 fontWeight = FontWeight.Bold
             )
-
-            IconButton(
-                onClick = { /* Refresh logic */ },
-                modifier = Modifier.size(48.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = "Atualizar lista",
-                    modifier = Modifier.size(32.dp),
-                    tint = MaterialTheme.colors.primary
-                )
-            }
         }
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(bottom = 16.dp)
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = { viewModel.getNews() }
         ) {
-            items(newsList) { item ->
-                NewsCard(
-                    chapeu = item.content?.chapeu?.label ?: "Sem Chapeu",
-                    title = item.content.title,
-                    description = item.content.section ,
-                    time = item.metadata
-                )
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(bottom = 16.dp)
+            ) {
+                items(newsList) { item ->
+                    NewsCard(
+                        chapeu = item.content?.chapeu?.label ?: "Sem Chapeu",
+                        title = item.content.title,
+                        description = item.content.section,
+                        time = item.metadata
+                    )
+                }
             }
         }
     }
@@ -175,6 +174,7 @@ fun NewsCard(chapeu: String?, title: String, description: String, time: String) 
                     .clip(RoundedCornerShape(12.dp))
                     .shadow(4.dp, shape = RoundedCornerShape(12.dp))
             )
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = description,
                 style = MaterialTheme.typography.body2,
