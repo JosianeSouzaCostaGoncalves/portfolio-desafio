@@ -58,6 +58,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.appnews.R
 import com.example.appnews.ui.theme.AppNewsTheme
 import com.example.appnews.viewModel.NewsViewModel
@@ -149,6 +151,7 @@ fun NewsScreen(navController: NavHostController, viewModel: NewsViewModel = koin
                         title = item.content.title,
                         description = item.content.section,
                         time = item.metadata,
+                        image = item.content.image?.sizes?.sizeL?.url,
                         onClick = {
                             val encodedUrl = Uri.encode(item.content.url)
                             navController.navigate("web_view_screen/$encodedUrl")
@@ -180,7 +183,14 @@ fun NewsScreen(navController: NavHostController, viewModel: NewsViewModel = koin
 }
 
 @Composable
-fun NewsCard(chapeu: String?, title: String, description: String, time: String,onClick: () -> Unit) {
+fun NewsCard(
+    chapeu: String?,
+    title: String,
+    description: String,
+    time: String,
+    image: String?,
+    onClick: () -> Unit
+) {
     Card(
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
@@ -211,17 +221,20 @@ fun NewsCard(chapeu: String?, title: String, description: String, time: String,o
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            Image(
-                painter = painterResource(id = R.drawable.ic_news),
-                contentDescription = "Imagem da notícia",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(16 / 9f)
-                    .clip(RoundedCornerShape(12.dp))
-                    .shadow(4.dp, shape = RoundedCornerShape(12.dp))
-            )
+            image?.let {
+                Spacer(modifier = Modifier.height(4.dp))
+                AsyncImage(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(image)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
+            }
+
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = description,
@@ -252,7 +265,11 @@ fun WebViewScreen(navController: NavController, url: String) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding())
+            .padding(
+                top = WindowInsets.statusBars
+                    .asPaddingValues()
+                    .calculateTopPadding()
+            )
     ) {
         Row(
             modifier = Modifier
@@ -276,11 +293,13 @@ fun WebViewScreen(navController: NavController, url: String) {
             )
         }
         AndroidView(
-            factory = { WebView(context).apply {
-                settings.javaScriptEnabled = true
-                webViewClient = WebViewClient()
-                loadUrl(url)
-            } },
+            factory = {
+                WebView(context).apply {
+                    settings.javaScriptEnabled = true
+                    webViewClient = WebViewClient()
+                    loadUrl(url)
+                }
+            },
             modifier = Modifier.fillMaxSize()
         )
     }
