@@ -1,10 +1,13 @@
 package com.example.appnews.ui.view
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,6 +26,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
+import android.net.Uri
+import androidx.compose.foundation.layout.WindowInsets
+import android.webkit.WebViewClient
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,15 +44,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.appnews.R
 import com.example.appnews.ui.theme.AppNewsTheme
 import com.example.appnews.viewModel.NewsViewModel
@@ -70,13 +85,20 @@ fun AppNavigation() {
 
     NavHost(navController = navController, startDestination = "news_screen") {
         composable("news_screen") {
-            NewsScreen()
+            NewsScreen(navController = navController)
+        }
+        composable(
+            route = "web_view_screen/{url}",
+            arguments = listOf(navArgument("url") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val url = backStackEntry.arguments?.getString("url") ?: ""
+            WebViewScreen(navController = navController, url = url)
         }
     }
 }
 
 @Composable
-fun NewsScreen(viewModel: NewsViewModel = koinViewModel()) {
+fun NewsScreen(navController: NavHostController, viewModel: NewsViewModel = koinViewModel()) {
     val newsResponse = viewModel.newsLive.observeAsState()
     val isRefreshing by viewModel.isRefreshing
 
@@ -126,7 +148,11 @@ fun NewsScreen(viewModel: NewsViewModel = koinViewModel()) {
                         chapeu = item.content?.chapeu?.label ?: "Sem Chapeu",
                         title = item.content.title,
                         description = item.content.section,
-                        time = item.metadata
+                        time = item.metadata,
+                        onClick = {
+                            val encodedUrl = Uri.encode(item.content.url)
+                            navController.navigate("web_view_screen/$encodedUrl")
+                        }
                     )
                 }
                 item {
@@ -154,12 +180,14 @@ fun NewsScreen(viewModel: NewsViewModel = koinViewModel()) {
 }
 
 @Composable
-fun NewsCard(chapeu: String?, title: String, description: String, time: String) {
+fun NewsCard(chapeu: String?, title: String, description: String, time: String,onClick: () -> Unit) {
     Card(
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(6.dp),
+            .shadow(6.dp)
+            .padding(8.dp)
+            .clickable { onClick() },
         elevation = 6.dp
     ) {
         Column(
@@ -211,10 +239,58 @@ fun NewsCard(chapeu: String?, title: String, description: String, time: String) 
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun PreviewNewsScreen() {
-    AppNewsTheme {
-        NewsScreen()
+@SuppressLint("SetJavaScriptEnabled")
+
+fun WebViewScreen(navController: NavController, url: String) {
+    val context = LocalContext.current
+
+    BackHandler {
+        navController.popBackStack()
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding())
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            IconButton(onClick = { navController.popBackStack() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow_back),
+                    contentDescription = "Voltar",
+                    tint = MaterialTheme.colors.primary
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Voltar",
+                style = MaterialTheme.typography.h6,
+                color = MaterialTheme.colors.primary
+            )
+        }
+        AndroidView(
+            factory = { WebView(context).apply {
+                settings.javaScriptEnabled = true
+                webViewClient = WebViewClient()
+                loadUrl(url)
+            } },
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
+
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewNewsScreen() {
+//    AppNewsTheme {
+//
+//        NewsScreen()
+//    }
+//}

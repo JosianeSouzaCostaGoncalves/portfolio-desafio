@@ -82,3 +82,9 @@
 ### **5º Commit**
 - Ajustado o filtro para exibir apenas os itens classificados como "básico" ou "materia" no feed principal.
 - Implementada a funcionalidade de paginação. O aplicativo agora realiza requisições para carregar a próxima página do feed conforme o usuário faz a rolagem.
+
+### **6° Commit**
+
+- Implementação da funcionalidade de navegação para uma nova tela ao clicar em um item, exibindo o conteúdo da matéria em um WebView.
+- Configuração do WebView para carregar a URL do item clicado usando o campo "url".
+- Adicionada a funcionalidade de voltar para a tela inicial através de um botão "Voltar" na nova tela.
