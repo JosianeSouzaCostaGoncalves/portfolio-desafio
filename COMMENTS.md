@@ -78,3 +78,7 @@
 - Melhoria no layout: Ajustes para melhor apresentação do nome do aplicativo, proporcionando maior espaçamento e clareza visual.
 - Remoção do ícone de refresh: Substituído por um gesto de Pull to Refresh(arrastar para baixo na lista), seguindo padrões mais modernos de usabilidade.
 - Implementação da lógica de refresh.
+
+### **5º Commit**
+- Ajustado o filtro para exibir apenas os itens classificados como "básico" ou "materia" no feed principal.
+- Implementada a funcionalidade de paginação. O aplicativo agora realiza requisições para carregar a próxima página do feed conforme o usuário faz a rolagem.

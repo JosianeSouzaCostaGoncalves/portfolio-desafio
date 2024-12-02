@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -84,7 +85,7 @@ fun NewsScreen(viewModel: NewsViewModel = koinViewModel()) {
     }
 
     val newsList = newsResponse.value?.feed?.falkor?.items
-        ?.filter { it.type?.lowercase() == "materia" }
+        ?.filter { it.type?.lowercase() in listOf("basico", "materia") }
         ?: emptyList()
 
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing)
@@ -127,6 +128,25 @@ fun NewsScreen(viewModel: NewsViewModel = koinViewModel()) {
                         description = item.content.section,
                         time = item.metadata
                     )
+                }
+                item {
+                    if (viewModel.isLoadingMore.value) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            androidx.compose.material.CircularProgressIndicator(
+                                modifier = Modifier.size(32.dp),
+                                color = MaterialTheme.colors.primary
+                            )
+                        }
+                    } else {
+                        LaunchedEffect(Unit) {
+                            viewModel.getNews()
+                        }
+                    }
                 }
             }
         }

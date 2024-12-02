@@ -6,7 +6,7 @@ import com.example.appnews.data.remote.api.model.NewsResponse
 class NewsRepository(
     private val newsApiService: NewsApiService
 ) {
-   suspend fun getNews(): NewsResponse {
-       return newsApiService.getNews()
+   suspend fun getNews(page: Int): NewsResponse {
+       return newsApiService.getNews(page)
    }
 }

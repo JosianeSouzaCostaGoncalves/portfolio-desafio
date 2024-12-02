@@ -1,6 +1,5 @@
 package com.example.appnews.viewModel
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,9 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appnews.data.remote.api.model.NewsResponse
 import com.example.appnews.data.remote.repository.NewsRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class NewsViewModel(
     private val repository: NewsRepository
@@ -21,16 +18,50 @@ class NewsViewModel(
     var isRefreshing = mutableStateOf(false)
         private set
 
-    fun getNews() {
-        isRefreshing.value = true
+    var isLoadingMore = mutableStateOf(false)
+        private set
+
+    private var currentPage = 1
+    private var hasNextPage = true
+
+    fun getNews(refresh: Boolean = false) {
+        if (refresh) {
+            currentPage = 1
+            hasNextPage = true
+        }
+
+        if (isLoadingMore.value || !hasNextPage) return
+
+        if (refresh) {
+            isRefreshing.value = true
+        } else {
+            isLoadingMore.value = true
+        }
+
         viewModelScope.launch {
             try {
-                val news = repository.getNews()
-                _newsLive.value = news
+                val newsResponse = repository.getNews(currentPage)
+                if (refresh) {
+                    _newsLive.value = newsResponse
+                } else {
+                    val currentData = _newsLive.value
+                    val combinedItems = (currentData?.feed?.falkor?.items ?: emptyList()) +
+                            (newsResponse.feed.falkor.items ?: emptyList())
+
+                    _newsLive.value = currentData?.copy(
+                        feed = currentData.feed.copy(
+                            falkor = currentData.feed.falkor.copy(items = combinedItems)
+                        )
+                    ) ?: newsResponse
+                }
+
+                hasNextPage = newsResponse.feed.falkor.items.isNotEmpty()
+                currentPage++
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
                 isRefreshing.value = false
+                isLoadingMore.value = false
             }
         }
     }
