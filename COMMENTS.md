@@ -104,3 +104,8 @@ Pois foi identificada uma falha no funcionamento do "Pull to Refresh", onde o m�
 
 ### **9° Commit**
 - Implementação do componente TabRow para navegação entre as abas do aplicativo("Home", "Economia" e "Menu") somente layout, a logica sera implementada posteriormente.
+
+### **10° Commit**
+- A separação da MainActivity em funções menores tem como objetivo melhorar a legibilidade, manutenção e reutilização do código sem alterar a lógica existente.
+- Cada componente foi isolado para realizar apenas uma tarefa específica.
+- O código foi modularizado, permitindo alterações futuras sem impactar outras áreas.
