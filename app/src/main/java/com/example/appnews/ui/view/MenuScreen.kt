@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -75,15 +76,25 @@ fun MenuList(navController: NavController) {
         menuItems.forEach { menuItem ->
             Button(
                 onClick = {
-                    // Codifica a URL para evitar problemas na navegação
                     val encodedUrl = URLEncoder.encode(menuItem.url, StandardCharsets.UTF_8.toString())
                     navController.navigate("web_view_screen/$encodedUrl")
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 8.dp),
+                colors = androidx.compose.material.ButtonDefaults.buttonColors(
+                    backgroundColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                elevation = androidx.compose.material.ButtonDefaults.elevation(
+                    defaultElevation = 4.dp,
+                    pressedElevation = 8.dp
+                )
             ) {
-                Text(text = menuItem.title)
+                Text(
+                    text = menuItem.title.uppercase(),
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         }
     }

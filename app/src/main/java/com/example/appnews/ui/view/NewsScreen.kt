@@ -57,7 +57,7 @@ fun NewsScreen(
             ) {
                 items(newsList) { item ->
                     NewsCard(
-                        chapeu = item.content?.chapeu?.label ?: "Sem Chapeu",
+                        chapeu = item.content?.chapeu?.label ?: "",
                         title = item.content.title,
                         description = item.content.section,
                         time = item.metadata,

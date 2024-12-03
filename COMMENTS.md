@@ -122,3 +122,6 @@ Pois foi identificada uma falha no funcionamento do "Pull to Refresh", onde o m�
 - Adicionar MenuScreen com lista de itens contendo títulos e URLs associados.
 - Implementar navegação ao clicar em um item do menu, abrindo a WebView correspondente.
 - Configurar WebViewScreen para exibir o conteúdo das URLs fornecidas pelo MenuScreen.
+
+### **14° Commit**
+- Ajuste na cor do aplicativo.
