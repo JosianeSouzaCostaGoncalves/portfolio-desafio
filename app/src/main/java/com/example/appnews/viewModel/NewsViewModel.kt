@@ -18,50 +18,25 @@ class NewsViewModel(
     var isRefreshing = mutableStateOf(false)
         private set
 
-    var isLoadingMore = mutableStateOf(false)
-        private set
-
-    private var currentPage = 1
     private var hasNextPage = true
 
-    fun getNews(refresh: Boolean = false) {
-        if (refresh) {
-            currentPage = 1
-            hasNextPage = true
-        }
-
-        if (isLoadingMore.value || (refresh && isRefreshing.value)) return
-        if (refresh) {
-            isRefreshing.value = true
-        } else {
-            isLoadingMore.value = true
-        }
-
+    fun getNews() {
         viewModelScope.launch {
+
             try {
-                val newsResponse = repository.getNews(currentPage)
-                if (refresh) {
-                    _newsLive.value = newsResponse
-                } else {
-                    val currentData = _newsLive.value
-                    val combinedItems = (currentData?.feed?.falkor?.items ?: emptyList()) +
-                            (newsResponse.feed.falkor.items ?: emptyList())
-
-                    _newsLive.value = currentData?.copy(
-                        feed = currentData.feed.copy(
-                            falkor = currentData.feed.falkor.copy(items = combinedItems)
-                        )
-                    ) ?: newsResponse
-                }
-
+                val newsResponse = repository.getNews(PRODUCT)
+                _newsLive.value = newsResponse
                 hasNextPage = newsResponse.feed.falkor.items.isNotEmpty()
-                currentPage++
-            } catch (e: Exception) {
-                e.printStackTrace()
-            } finally {
                 isRefreshing.value = false
-                isLoadingMore.value = false
+
+            } catch (e: Exception) {
+                isRefreshing.value = false
+                e.printStackTrace()
             }
         }
+    }
+
+    companion object {
+        private const val PRODUCT = "g1"
     }
 }

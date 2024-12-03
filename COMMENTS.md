@@ -109,3 +109,7 @@ Pois foi identificada uma falha no funcionamento do "Pull to Refresh", onde o m�
 - A separação da MainActivity em funções menores tem como objetivo melhorar a legibilidade, manutenção e reutilização do código sem alterar a lógica existente.
 - Cada componente foi isolado para realizar apenas uma tarefa específica.
 - O código foi modularizado, permitindo alterações futuras sem impactar outras áreas.
+
+### **11° Commit**
+- Ajuste na requisição pois esta passando o parametro sem necessidade.
+- Ajuste lógica do refresh( aparecimento do looading quando fazemos uma nova requisição )
