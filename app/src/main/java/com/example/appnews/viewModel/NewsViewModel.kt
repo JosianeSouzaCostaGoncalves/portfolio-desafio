@@ -20,11 +20,11 @@ class NewsViewModel(
 
     private var hasNextPage = true
 
-    fun getNews() {
+    fun getNews(uri: String) {
         viewModelScope.launch {
 
             try {
-                val newsResponse = repository.getNews(PRODUCT)
+                val newsResponse = repository.getNews(uri)
                 _newsLive.value = newsResponse
                 hasNextPage = newsResponse.feed.falkor.items.isNotEmpty()
                 isRefreshing.value = false
@@ -34,9 +34,5 @@ class NewsViewModel(
                 e.printStackTrace()
             }
         }
-    }
-
-    companion object {
-        private const val PRODUCT = "g1"
     }
 }

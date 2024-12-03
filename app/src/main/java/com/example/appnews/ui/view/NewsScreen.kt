@@ -22,12 +22,16 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun NewsScreen(navController: NavHostController, viewModel: NewsViewModel = koinViewModel()) {
+fun NewsScreen(
+    navController: NavHostController,
+    uri: String,
+    viewModel: NewsViewModel = koinViewModel()
+) {
     val newsResponse = viewModel.newsLive.observeAsState()
     var isRefreshing by viewModel.isRefreshing
 
     LaunchedEffect(Unit) {
-        viewModel.getNews()
+        viewModel.getNews(uri)
     }
 
     val newsList = newsResponse.value?.feed?.falkor?.items
@@ -44,7 +48,7 @@ fun NewsScreen(navController: NavHostController, viewModel: NewsViewModel = koin
             state = swipeRefreshState,
             onRefresh = {
                 isRefreshing = true
-                viewModel.getNews()
+                viewModel.getNews(uri)
             }
         ) {
             LazyColumn(

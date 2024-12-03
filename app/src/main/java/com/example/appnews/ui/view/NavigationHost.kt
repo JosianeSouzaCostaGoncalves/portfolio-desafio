@@ -14,10 +14,16 @@ fun NavigationHost(navController: NavHostController) {
         startDestination = "news_screen"
     ) {
         composable("news_screen") {
-            NewsScreen(navController = navController)
+            NewsScreen(
+                navController = navController,
+                uri = PRODUCT_G1
+            )
         }
         composable("economy_screen") {
-            EconomyScreen(navController = navController)
+            NewsScreen(
+                navController = navController,
+                uri = PRODUCT_ECONOMY
+            )
         }
         composable("menu_screen") {
             MenuScreen(navController = navController)
@@ -31,3 +37,6 @@ fun NavigationHost(navController: NavHostController) {
         }
     }
 }
+
+private const val PRODUCT_G1 = "g1"
+private const val PRODUCT_ECONOMY = "https://g1.globo.com/economia/agronegocios"

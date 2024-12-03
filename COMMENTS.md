@@ -113,3 +113,6 @@ Pois foi identificada uma falha no funcionamento do "Pull to Refresh", onde o m�
 ### **11° Commit**
 - Ajuste na requisição pois esta passando o parametro sem necessidade.
 - Ajuste lógica do refresh( aparecimento do looading quando fazemos uma nova requisição )
+
+### **12° Commit**
+- Configurando a busca da requisição na aba de economia, possibilitando a visualização do carregamento das informações da guia de economia.
