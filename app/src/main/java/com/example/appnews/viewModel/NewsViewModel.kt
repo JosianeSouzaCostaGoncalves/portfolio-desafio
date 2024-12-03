@@ -30,8 +30,7 @@ class NewsViewModel(
             hasNextPage = true
         }
 
-        if (isLoadingMore.value || !hasNextPage) return
-
+        if (isLoadingMore.value || (refresh && isRefreshing.value)) return
         if (refresh) {
             isRefreshing.value = true
         } else {

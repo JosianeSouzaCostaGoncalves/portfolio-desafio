@@ -84,7 +84,23 @@
 - Implementada a funcionalidade de paginação. O aplicativo agora realiza requisições para carregar a próxima página do feed conforme o usuário faz a rolagem.
 
 ### **6° Commit**
-
 - Implementação da funcionalidade de navegação para uma nova tela ao clicar em um item, exibindo o conteúdo da matéria em um WebView.
 - Configuração do WebView para carregar a URL do item clicado usando o campo "url".
 - Adicionada a funcionalidade de voltar para a tela inicial através de um botão "Voltar" na nova tela.
+
+### **7° Commit**
+- Adicionada funcionalidade para buscar e exibir imagens de uma fonte alternativa (sizes.sizeL.url) presente no objeto Image.
+- Modificada a exibição de imagens na NewsCard, priorizando o uso da nova fonte alternativa para exibir as imagens, caso a principal não esteja disponível.
+
+
+### Explicação sobre a dificuldade enfrentada na busca da imagem e a solução aplicada
+- Durante o desenvolvimento, enfrentei um problema relacionado à exibição de imagens no aplicativo. A URL principal da imagem fornecida pela API não estava sendo renderizada corretamente,
+o que causava falhas visuais nos itens da lista.
+Para resolver essa questão, revisei a resposta da API e identifiquei que ela oferecia imagens alternativas em diferentes tamanhos no campo sizes, dentro do objeto Image. 
+Aproveitei essas opções para ajustar a lógica de exibição de imagens no aplicativo.
+Adotei uma abordagem que prioriza o tamanho "L" (grande) da imagem alternativa, acessando o campo sizeL.url. Dessa forma, mesmo quando a imagem principal está ausente ou apresenta problemas, 
+o aplicativo consegue renderizar uma imagem válida, garantindo uma experiência mais consistente para o usuário.
+
+### **8° Commit**
+- Correção do comportamento de "Pull to Refresh", permitindo que os usuários atualizem a lista de notícias manualmente.
+Pois foi identificada uma falha no funcionamento do "Pull to Refresh", onde o método de atualização do ViewModel não estava sendo acionado corretamente e os estados de atualização (isRefreshing e isLoadingMore) não estavam sendo gerenciados de forma eficaz.
