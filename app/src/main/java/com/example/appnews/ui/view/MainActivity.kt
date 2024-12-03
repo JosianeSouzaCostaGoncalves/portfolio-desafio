@@ -28,14 +28,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -79,19 +85,93 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppNavigation() {
-    val navController: NavHostController = rememberNavController()
+    val navController = rememberNavController()
+    val tabs = listOf("Home", "Economia", "Menu")
+    var selectedTabIndex by remember { mutableStateOf(0) }
 
-    NavHost(navController = navController, startDestination = "news_screen") {
-        composable("news_screen") {
-            NewsScreen(navController = navController)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding())
+    ) {
+        Text(
+            text = "Aplicativo News",
+            style = MaterialTheme.typography.h4,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        TabRow(selectedTabIndex = selectedTabIndex) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTabIndex == index,
+                    onClick = { selectedTabIndex = index },
+                    text = { Text(title) }
+                )
+            }
         }
-        composable(
-            route = "web_view_screen/{url}",
-            arguments = listOf(navArgument("url") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val url = backStackEntry.arguments?.getString("url") ?: ""
-            WebViewScreen(navController = navController, url = url)
+        Spacer(modifier = Modifier.height(8.dp))
+        NavHost(
+            navController = navController,
+            startDestination = "news_screen"
+        ) {
+            composable("news_screen") {
+                NewsScreen(navController = navController)
+            }
+            composable("economy_screen") {
+                EconomyScreen(navController = navController)
+            }
+            composable("menu_screen") {
+                MenuScreen(navController = navController)
+            }
+            composable(
+                route = "web_view_screen/{url}",
+                arguments = listOf(navArgument("url") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val url = backStackEntry.arguments?.getString("url") ?: ""
+                WebViewScreen(navController = navController, url = url)
+            }
         }
+        when (selectedTabIndex) {
+            0 -> navController.navigate("news_screen")
+            1 -> navController.navigate("economy_screen")
+            2 -> navController.navigate("menu_screen")
+        }
+    }
+}
+
+@Composable
+fun EconomyScreen(navController: NavHostController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Economia",
+            style = MaterialTheme.typography.h4,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+fun MenuScreen(navController: NavHostController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Menu",
+            style = MaterialTheme.typography.h4,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
@@ -114,25 +194,6 @@ fun NewsScreen(navController: NavHostController, viewModel: NewsViewModel = koin
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = androidx.compose.foundation.layout.WindowInsets.statusBars
-                        .asPaddingValues()
-                        .calculateTopPadding() + 16.dp,
-                    bottom = 16.dp
-                ),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Aplicativo News",
-                style = MaterialTheme.typography.h4,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
         SwipeRefresh(
             state = swipeRefreshState,
             onRefresh = { viewModel.getNews(refresh = true) }

@@ -92,15 +92,15 @@
 - Adicionada funcionalidade para buscar e exibir imagens de uma fonte alternativa (sizes.sizeL.url) presente no objeto Image.
 - Modificada a exibição de imagens na NewsCard, priorizando o uso da nova fonte alternativa para exibir as imagens, caso a principal não esteja disponível.
 
+## Explicação sobre a dificuldade enfrentada na busca da imagem e a solução aplicada
 
-### Explicação sobre a dificuldade enfrentada na busca da imagem e a solução aplicada
-- Durante o desenvolvimento, enfrentei um problema relacionado à exibição de imagens no aplicativo. A URL principal da imagem fornecida pela API não estava sendo renderizada corretamente,
-o que causava falhas visuais nos itens da lista.
-Para resolver essa questão, revisei a resposta da API e identifiquei que ela oferecia imagens alternativas em diferentes tamanhos no campo sizes, dentro do objeto Image. 
-Aproveitei essas opções para ajustar a lógica de exibição de imagens no aplicativo.
-Adotei uma abordagem que prioriza o tamanho "L" (grande) da imagem alternativa, acessando o campo sizeL.url. Dessa forma, mesmo quando a imagem principal está ausente ou apresenta problemas, 
-o aplicativo consegue renderizar uma imagem válida, garantindo uma experiência mais consistente para o usuário.
+Durante o desenvolvimento, identifiquei um problema relacionado à exibição de imagens no aplicativo. A URL principal da imagem fornecida pela API não estava sendo renderizada corretamente, o que resultava em falhas visuais nos itens da lista.
+Para resolver esse problema, revisei a resposta da API e descobri que ela disponibilizava imagens alternativas em diferentes tamanhos no campo sizes, dentro do objeto Image. Com isso, ajustei a lógica de exibição de imagens no aplicativo para priorizar o tamanho "L" (grande) disponível no campo sizeL.url.
+Essa abordagem assegura que, mesmo quando a imagem principal estiver ausente ou apresentar falhas, o aplicativo ainda será capaz de exibir uma imagem válida, garantindo uma experiência visual mais consistente para o usuário.
 
 ### **8° Commit**
 - Correção do comportamento de "Pull to Refresh", permitindo que os usuários atualizem a lista de notícias manualmente.
 Pois foi identificada uma falha no funcionamento do "Pull to Refresh", onde o método de atualização do ViewModel não estava sendo acionado corretamente e os estados de atualização (isRefreshing e isLoadingMore) não estavam sendo gerenciados de forma eficaz.
+
+### **9° Commit**
+- Implementação do componente TabRow para navegação entre as abas do aplicativo("Home", "Economia" e "Menu") somente layout, a logica sera implementada posteriormente.
