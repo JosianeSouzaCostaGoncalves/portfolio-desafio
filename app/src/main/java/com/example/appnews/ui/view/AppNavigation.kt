@@ -19,21 +19,30 @@ fun AppNavigation() {
     val navController = rememberNavController()
     val tabs = listOf("Home", "Economia", "Menu")
     var selectedTabIndex by remember { mutableStateOf(0) }
+    var showTabs by remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding())
     ) {
-        AppHeader()
-        TabRowComponent(selectedTabIndex, tabs) { index ->
-            selectedTabIndex = index
-            when (index) {
-                0 -> navController.navigate("news_screen")
-                1 -> navController.navigate("economy_screen")
-                2 -> navController.navigate("menu_screen")
+        if (showTabs) {
+            AppHeader()
+        }
+
+        if (showTabs) {
+            TabRowComponent(selectedTabIndex, tabs) { index ->
+                selectedTabIndex = index
+                when (index) {
+                    0 -> navController.navigate("news_screen")
+                    1 -> navController.navigate("economy_screen")
+                    2 -> navController.navigate("menu_screen")
+                }
             }
         }
-        NavigationHost(navController)
+
+        NavigationHost(navController = navController) { shouldShowTabs ->
+            showTabs = shouldShowTabs
+        }
     }
 }

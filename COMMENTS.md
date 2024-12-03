@@ -116,3 +116,9 @@ Pois foi identificada uma falha no funcionamento do "Pull to Refresh", onde o m�
 
 ### **12° Commit**
 - Configurando a busca da requisição na aba de economia, possibilitando a visualização do carregamento das informações da guia de economia.
+
+### **13° Commit**
+- Logica para controlar a exibição das abas (Home, Economia, Menu). Quando for uma webView essas opções ficarão ocultas.
+- Adicionar MenuScreen com lista de itens contendo títulos e URLs associados.
+- Implementar navegação ao clicar em um item do menu, abrindo a WebView correspondente.
+- Configurar WebViewScreen para exibir o conteúdo das URLs fornecidas pelo MenuScreen.
