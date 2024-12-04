@@ -76,7 +76,8 @@ fun MenuList(navController: NavController) {
         menuItems.forEach { menuItem ->
             Button(
                 onClick = {
-                    val encodedUrl = URLEncoder.encode(menuItem.url, StandardCharsets.UTF_8.toString())
+                    val encodedUrl =
+                        URLEncoder.encode(menuItem.url, StandardCharsets.UTF_8.toString())
                     navController.navigate("web_view_screen/$encodedUrl")
                 },
                 modifier = Modifier

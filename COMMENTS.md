@@ -130,3 +130,6 @@ Pois foi identificada uma falha no funcionamento do "Pull to Refresh", onde o m�
 - Ajuste de logica para recebimento de paginação correta.
 - Implementação do layout para aparecimento do loading.
 - Adicionado nulaveis nas variaveis de modelo.
+
+### **16° Commit**
+- indentação do código e remoção de importes que não estavam sendo usados.

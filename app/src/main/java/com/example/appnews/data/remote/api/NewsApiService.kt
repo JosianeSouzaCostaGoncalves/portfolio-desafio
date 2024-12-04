@@ -18,5 +18,4 @@ interface NewsApiService {
         @Path("page")
         page: Int,
     ): NewsResponse
-
 }

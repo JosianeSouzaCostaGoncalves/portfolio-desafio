@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName
 data class Image(
     val url: String?,
     val sizes: ImageSizes?
-
 )
 
 data class ImageSizeDetails(
@@ -15,5 +14,4 @@ data class ImageSizeDetails(
 data class ImageSizes(
     @SerializedName("L")
     val sizeL: ImageSizeDetails?
-
 )

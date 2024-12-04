@@ -8,7 +8,7 @@ import com.example.appnews.data.remote.api.model.NewsResponse
 class NewsPagingSource(
     private val api: NewsApiService,
     private val uri: String
-): PagingSource<Int, NewsResponse>() {
+) : PagingSource<Int, NewsResponse>() {
     private var feedId: String? = null
     private var nextPage: Int? = null
 
@@ -27,7 +27,7 @@ class NewsPagingSource(
                 )
             } else {
                 val feedResponse = api.getFeeds(
-                    id = feedId?: "",
+                    id = feedId ?: "",
                     page = currentPage
                 )
 
