@@ -133,3 +133,8 @@ Pois foi identificada uma falha no funcionamento do "Pull to Refresh", onde o m�
 
 ### **16° Commit**
 - indentação do código e remoção de importes que não estavam sendo usados.
+
+### **17° Commit**
+- Ajustes layout.
+- ## Não tive tempo de implementar os diferenciais.
+

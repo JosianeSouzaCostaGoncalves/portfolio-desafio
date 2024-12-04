@@ -35,8 +35,8 @@ fun NewsCard(
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(6.dp)
             .padding(8.dp)
+            .shadow(6.dp)
             .clickable { onClick() },
         elevation = 6.dp
     ) {

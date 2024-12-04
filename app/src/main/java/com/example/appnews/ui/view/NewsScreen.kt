@@ -47,7 +47,8 @@ fun NewsScreen(
     SwipeRefresh(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(horizontal = 16.dp)
+            .padding(top = 8.dp),
         state = swipeRefreshState,
         onRefresh = {
             isRefreshing = true
