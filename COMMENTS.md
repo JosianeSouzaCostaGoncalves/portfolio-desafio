@@ -125,3 +125,8 @@ Pois foi identificada uma falha no funcionamento do "Pull to Refresh", onde o m�
 
 ### **14° Commit**
 - Ajuste na cor do aplicativo.
+
+### **15° Commit**
+- Ajuste de logica para recebimento de paginação correta.
+- Implementação do layout para aparecimento do loading.
+- Adicionado nulaveis nas variaveis de modelo.

@@ -7,15 +7,20 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.appnews.viewModel.NewsViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -27,46 +32,77 @@ fun NewsScreen(
     uri: String,
     viewModel: NewsViewModel = koinViewModel()
 ) {
-    val newsResponse = viewModel.newsLive.observeAsState()
-    var isRefreshing by viewModel.isRefreshing
-
-    LaunchedEffect(Unit) {
-        viewModel.getNews(uri)
+    var isRefreshing by remember {
+        mutableStateOf(false)
     }
 
-    val newsList = newsResponse.value?.feed?.falkor?.items
-        ?.filter { it.type?.lowercase() in listOf("basico", "materia") }
-        ?: emptyList()
+    val lazyPagingItems = viewModel.getPagedNews(uri).collectAsLazyPagingItems()
+
+    LaunchedEffect(Unit) {
+        viewModel.getPagedNews(uri)
+    }
 
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing)
-    Column(
+
+    SwipeRefresh(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+        state = swipeRefreshState,
+        onRefresh = {
+            isRefreshing = true
+            viewModel.getPagedNews(uri)
+        }
     ) {
-        SwipeRefresh(
-            state = swipeRefreshState,
-            onRefresh = {
-                isRefreshing = true
-                viewModel.getNews(uri)
-            }
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(bottom = 16.dp)
-            ) {
-                items(newsList) { item ->
+            items(lazyPagingItems.itemCount) { index ->
+                val newsResponse = lazyPagingItems[index]
+                val newsList = newsResponse?.feed?.falkor?.items
+                    ?.filter { it.type?.lowercase() in listOf("basico", "materia") }
+                    ?: emptyList()
+
+                newsList.forEach { item ->
                     NewsCard(
                         chapeu = item.content?.chapeu?.label ?: "",
-                        title = item.content.title,
-                        description = item.content.section,
-                        time = item.metadata,
-                        image = item.content.image?.sizes?.sizeL?.url,
+                        title = item.content?.title ?: "",
+                        description = item.content?.summary ?: "",
+                        time = item.metadata ?: "",
+                        image = item.content?.image?.sizes?.sizeL?.url,
                         onClick = {
-                            val encodedUrl = Uri.encode(item.content.url)
+                            val encodedUrl = Uri.encode(item.content?.url)
                             navController.navigate("web_view_screen/$encodedUrl")
                         }
                     )
+                }
+            }
+            lazyPagingItems.apply {
+                when (
+                    loadState.refresh
+                ) {
+                    is LoadState.NotLoading, is LoadState.Error -> {
+                        isRefreshing = false
+                    }
+
+                    is LoadState.Loading -> {
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                CircularProgressIndicator(
+                                    color = MaterialTheme.colorScheme.primary,
+                                    strokeWidth = 4.dp
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
